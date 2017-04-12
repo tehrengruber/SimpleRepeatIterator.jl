@@ -1,6 +1,6 @@
 module SimpleRepeatIterator
 
-import Base: start, next, done, length, eltype, repeat
+import Base: start, next, done, length, eltype, repeat, size, getindex
 
 immutable RepeatIterator{IT}
   v::IT
@@ -24,7 +24,13 @@ function next(it::RepeatIterator, state::Tuple{Int, Int, Int})
 end
 done(it::RepeatIterator, state::Tuple{Int, Int, Int}) = state[1]==length(it.v) && state[3]==it.outer
 length(it::RepeatIterator) = length(it.v)*it.inner*it.outer
+size(it::RepeatIterator) = (length(it),)
 eltype(it::RepeatIterator) = eltype(it.v)
+function getindex(it::RepeatIterator, i)
+  @boundscheck i<=length(it) || throw(BoundsError(it, i))
+  #it.v[ceil(Int, (((i-1)%it.outer)+1)/it.inner)] # not correct, todo: check that i<length
+  it.v[(ceil(Int, i/it.inner)-1)%(length(it.v))+1]
+end
 
 """
 Construct an iterable by repeating the individual entries of `v` `inner` times.
