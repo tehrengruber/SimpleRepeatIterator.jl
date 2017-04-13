@@ -26,6 +26,7 @@ done(it::RepeatIterator, state::Tuple{Int, Int, Int}) = state[1]==length(it.v) &
 length(it::RepeatIterator) = length(it.v)*it.inner*it.outer
 size(it::RepeatIterator) = (length(it),)
 eltype(it::RepeatIterator) = eltype(it.v)
+eltype{IT}(::Type{RepeatIterator{IT}}) = eltype(IT)
 function getindex(it::RepeatIterator, i)
   @boundscheck i<=length(it) || throw(BoundsError(it, i))
   #it.v[ceil(Int, (((i-1)%it.outer)+1)/it.inner)] # not correct, todo: check that i<length

@@ -1,7 +1,6 @@
 using SimpleRepeatIterator
 using Base.Test
 
-# write your own tests here
 @test collect(repeat(1:2, inner=2)) == [1, 1, 2, 2]
 @test collect(repeat([1, 2], inner=2)) == [1, 1, 2, 2]
 
@@ -18,6 +17,12 @@ let res = [1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2],
   end
 end
 
-@inferred collect(repeat([1, 2], inner=2))
-@inferred collect(repeat([1, 2], outer=2))
 @inferred collect(repeat([1, 2], inner=3, outer=2))
+
+let r=repeat([1, 2], inner=2)
+  @inferred r[1]
+  @inferred collect(r)
+  @inferred collect(r)
+  @test eltype(typeof(r)) == Int
+  @test eltype(zip(r, r)) == Tuple{Int, Int}
+end
